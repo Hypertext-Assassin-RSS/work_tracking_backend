@@ -3,19 +3,8 @@ const router = express.Router();
 const { Pool } = require('pg');
 const cors = require('cors');
 require('dotenv').config();
+const db = require('../db/db')
 
-
-const pool = new Pool({
-    user: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    host: process.env.HOST,
-    port: process.env.PORT,
-    database: process.env.DATABASE,
-    ssl: {
-        rejectUnauthorized: true,
-        ca: process.env.PGSSLCERT,
-    },
-});
 
 
 const createReturnsTableQuery = `CREATE TABLE IF NOT EXISTS Returns (
@@ -34,7 +23,7 @@ const createReturnsTableQuery = `CREATE TABLE IF NOT EXISTS Returns (
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
-  
+    
     const today = new Date();
     const currentMonth = monthNames[today.getMonth()];
     const lastMonth = monthNames[(today.getMonth() - 1)];
@@ -43,6 +32,8 @@ const createReturnsTableQuery = `CREATE TABLE IF NOT EXISTS Returns (
     const firstDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-01"
     const lastDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-" +lastDay
 
+    const pool = db.getPool();
+    pool.connect();
 pool.query(createReturnsTableQuery, (err, result) => {
     if (err) {
         console.error('Error creating Returns table:', err);

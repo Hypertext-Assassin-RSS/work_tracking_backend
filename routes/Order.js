@@ -3,19 +3,7 @@ const router = express.Router();
 const { Pool } = require('pg');
 const cors = require('cors');
 require('dotenv').config();
-
-
-const pool = new Pool({
-    user: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    host: process.env.HOST,
-    port: process.env.PORT,
-    database: process.env.DATABASE,
-    ssl: {
-        rejectUnauthorized: true,
-        ca: process.env.PGSSLCERT,
-    },
-});
+const db = require('../db/db')
 
 
 const createOrdersTableQuery = `
@@ -44,7 +32,8 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
     const firstDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-01"
     const lastDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-" +lastDay
 
-
+    const pool = db.getPool();
+    pool.connect()
 pool.query(createOrdersTableQuery, (err, result) => {
     if (err) {
         console.error('Error creating Orders table:', err);
@@ -74,4 +63,26 @@ router.get('/last', async (req, res) => {
     }
 });
 
+
+router.post('/create', async (req, res) => {
+    const { product_code, date, qty, customer_id, status , month} = req.body;
+
+    try {
+
+        const query1 = `select * From public.products where product_code = $1 and product_month = $2`
+
+        const { rows } = await pool.query(query1,[product_code,month]);
+
+        const query = `INSERT INTO public.orders (product_name, product_code, date, qty, customer_id, status)
+                       VALUES ($1, $2, $3, $4, $5, $6)`;
+        const values = [product_code,rows[0].product_name, date, qty, customer_id, status];
+    
+        const result = await pool.query(query, values);
+    
+        res.status(200).json({ message: 'Order created successfully' , data :result});
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error creating order' });
+      }
+});
 module.exports = router;

@@ -1,5 +1,6 @@
 const express = require('express')
 const Agent = require('./routes/Agent')
+const Customer = require('./routes/Customer')
 const Order = require('./routes/Order')
 const Product = require('./routes/Product')
 const Return = require('./routes/Return')
@@ -8,12 +9,13 @@ const cors=require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = 4000
+const port = process.env.PORT || "8080";
 
 app.use(express.json())
 app.use(cors())
 
-app.use('/agent',Agent)
+// app.use('/agent',Agent)
+app.use('/customer',Customer)
 app.use('/order',Order)
 app.use('/product',Product)
 app.use('/return',Return)
