@@ -29,6 +29,10 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
     const lastMonth = monthNames[(today.getMonth() - 1)];
     const lastDay = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
 
+    const thisfirstDate = today.getFullYear() + "-" + ((today.getMonth() + 1) < 10 ?  "0" + (today.getMonth() + 1) : (today.getMonth() + 1)) + "-01"
+    const thislastDate = today.getFullYear() + "-" + ((today.getMonth() + 1) < 10 ?  "0" + (today.getMonth() + 1) : (today.getMonth() + 1)) + "-" +lastDay
+
+
     const firstDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-01"
     const lastDate = today.getFullYear() + "-" + (today.getMonth() < 10 ?  "0" + today.getMonth() : today.getMonth()) + "-" +lastDay
 
@@ -53,6 +57,16 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/month', async (req, res) => {
+    try {
+        const query = `SELECT * FROM Orders WHERE date >= $1 AND date <= $2;`;
+        const { rows } = await pool.query(query, [thisfirstDate,thislastDate]);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.json(rows);
+    } catch (err) {
+        res.status(500).send('Data Load Failed: ' + err.message);
+    }
+});
 
 router.get('/last', async (req, res) => {
     try {
@@ -86,4 +100,5 @@ router.post('/create', async (req, res) => {
         res.status(500).json({ message: 'Error creating order' });
       }
 });
+
 module.exports = router;
