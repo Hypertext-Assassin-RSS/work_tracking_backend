@@ -70,18 +70,17 @@ router.post('/create', async (req, res) => {
     const { product_code, date, qty, customer_id, status , month} = req.body;
 
     try {
-
         const query1 = `select * From public.products where product_code = $1 and product_month = $2`
 
         const { rows } = await pool.query(query1,[product_code,month]);
 
         const query = `INSERT INTO public.orders (product_name, product_code, date, qty, customer_id, status)
                        VALUES ($1, $2, $3, $4, $5, $6)`;
-        const values = [product_code,rows[0].product_name, date, qty, customer_id, status];
+        const values = [rows[0].product_name, product_code ,date, qty, customer_id, status];
     
         const result = await pool.query(query, values);
         res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
-        res.status(200).json({ message: 'Order created successfully' , data :result});
+        res.status(200).json({ message: 'Order created successfully'});
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error creating order' });
