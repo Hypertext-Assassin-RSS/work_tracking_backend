@@ -47,6 +47,7 @@ pool.query(createOrdersTableQuery, (err, result) => {
 });
 
 router.get('/', async (req, res) => {
+
     try {
         const query = 'SELECT * FROM Orders';
         const { rows } = await pool.query(query);
@@ -58,9 +59,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/month', async (req, res) => {
+    const customer_id = req.query.customer_id;
     try {
-        const query = `SELECT * FROM Orders WHERE date >= $1 AND date <= $2;`;
-        const { rows } = await pool.query(query, [thisfirstDate,thislastDate]);
+        const query = `SELECT * FROM Orders WHERE customer_id = $1 and date >= $2 AND date <= $3;`;
+        const { rows } = await pool.query(query, [customer_id,thisfirstDate,thislastDate]);
         res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
@@ -69,9 +71,10 @@ router.get('/month', async (req, res) => {
 });
 
 router.get('/last', async (req, res) => {
+    const customer_id = req.query.customer_id;
     try {
-        const query = `SELECT * FROM Orders WHERE date >= $1 AND date <= $2;`;
-        const { rows } = await pool.query(query, [firstDate,lastDate]);
+        const query = `SELECT * FROM Orders WHERE customer_id = $1 and date >= $2 AND date <= $3;`;
+        const { rows } = await pool.query(query, [customer_id,firstDate,lastDate]);
         res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
