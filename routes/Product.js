@@ -119,9 +119,8 @@ router.get('/', async (req, res) => {
     try {
         const query = 'SELECT * FROM Products';
         const { rows } = await pool.query(query);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
-
-        client.release();
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
     }
@@ -132,9 +131,8 @@ router.get('/month', async (req, res) => {
     try {
         const query = `select * from products where product_month = $1`;
         const { rows } = await pool.query(query, [currentMonth]);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
-
-        client.release();
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
     }

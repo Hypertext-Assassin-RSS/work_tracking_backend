@@ -46,6 +46,7 @@ router.get('/', async (req, res) => {
     try {
         const query = 'SELECT * FROM Orders';
         const { rows } = await pool.query(query);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -57,6 +58,7 @@ router.get('/last', async (req, res) => {
     try {
         const query = `SELECT * FROM Orders WHERE date >= $1 AND date <= $2;`;
         const { rows } = await pool.query(query, [firstDate,lastDate]);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -78,7 +80,7 @@ router.post('/create', async (req, res) => {
         const values = [product_code,rows[0].product_name, date, qty, customer_id, status];
     
         const result = await pool.query(query, values);
-    
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.status(200).json({ message: 'Order created successfully' , data :result});
       } catch (error) {
         console.error(error);

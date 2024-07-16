@@ -46,6 +46,7 @@ router.get('/', async (req, res) => {
     try {
         const query = 'SELECT * FROM Returns';
         const { rows } = await pool.query(query);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -56,6 +57,7 @@ router.get('/last', async (req, res) => {
     try {
         const query = `SELECT * FROM Returns WHERE date >= $1 AND date <= $2;`;
         const { rows } = await pool.query(query, [firstDate,lastDate]);
+        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
