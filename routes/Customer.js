@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
     try {
         const query = 'SELECT * FROM customer';
         const { rows } = await pool.query(query);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -52,7 +52,7 @@ router.get('/search', async (req, res) => {
         const customer_id = req.query.customer_id;
         const query = 'SELECT * FROM "public"."customer" WHERE customer_id = $1';
         const { rows } = await pool.query(query, [customer_id]);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.json({ message: `Customer ${customer_id} Search Success`, result: rows });
     } catch (err) {
         res.status(500).send(`Customer ${req.query.customer_id} Search Failed: ${err.message}`);

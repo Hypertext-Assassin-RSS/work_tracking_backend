@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
     try {
         const query = 'SELECT * FROM Orders';
         const { rows } = await pool.query(query);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -63,7 +63,7 @@ router.get('/month', async (req, res) => {
     try {
         const query = `SELECT * FROM Orders WHERE customer_id = $1 and date >= $2 AND date <= $3;`;
         const { rows } = await pool.query(query, [customer_id,thisfirstDate,thislastDate]);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -75,7 +75,7 @@ router.get('/last', async (req, res) => {
     try {
         const query = `SELECT * FROM Orders WHERE customer_id = $1 and date >= $2 AND date <= $3;`;
         const { rows } = await pool.query(query, [customer_id,firstDate,lastDate]);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
     } catch (err) {
         res.status(500).send('Data Load Failed: ' + err.message);
@@ -96,7 +96,7 @@ router.post('/create', async (req, res) => {
         const values = [rows[0].product_name, product_code ,date, qty, customer_id, status];
     
         const result = await pool.query(query, values);
-        res.setHeader('Access-Control-Allow-Origin', 'https://work-tracking-frontend-thrumming-frog-959.fly.dev');
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).json({ message: 'Order created successfully'});
       } catch (error) {
         console.error(error);
