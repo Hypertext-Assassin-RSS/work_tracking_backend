@@ -11,6 +11,7 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 const today = new Date();
 
 const currentMonth = monthNames[today.getMonth()];
+const lastMonth = monthNames[(today.getMonth() -1)];
 
 
 const createProductsTableQuery = `CREATE TABLE IF NOT EXISTS Product (
@@ -131,6 +132,17 @@ router.get('/month', async (req, res) => {
     try {
         const query = `select * from products where product_month = $1`;
         const { rows } = await pool.query(query, [currentMonth]);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.json(rows);
+    } catch (err) {
+        res.status(500).send('Data Load Failed: ' + err.message);
+    }
+});
+
+router.get('/last', async (req, res) => {
+    try {
+        const query = `select * from products where product_month = $1`;
+        const { rows } = await pool.query(query, [lastMonth]);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
     } catch (err) {
