@@ -85,21 +85,21 @@ router.post('/create', async (req, res) => {
     const { product_code, date, qty, customer_id, status , month} = req.body;
 
     try {
-        const query1 = `select * From public.products where product_code = $1 and product_month = $2`
+        const query1 = `select * From public.products where product_code = $1 and $2 = any (product_months);`
 
         const { rows } = await pool.query(query1,[product_code,month]);
 
         const query = `INSERT INTO public.Returns (product_name, product_code, date, qty, customer_id, status)
-                       VALUES ($1, $2, $3, $4, $5, $6)`;
+                    VALUES ($1, $2, $3, $4, $5, $6)`;
         const values = [rows[0].product_name, product_code ,date, qty, customer_id, status];
     
         const result = await pool.query(query, values);
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.status(200).json({ message: 'Returns Order created successfully'});
-      } catch (error) {
+        res.status(200).json({ message: 'Returns Order created successfully' , 'result':result });
+    } catch (error) {       
         console.error(error);
         res.status(500).json({ message: 'Error creating Returns order' });
-      }
+    }
 });
 
 

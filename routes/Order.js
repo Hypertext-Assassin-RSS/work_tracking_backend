@@ -87,7 +87,7 @@ router.post('/create', async (req, res) => {
     const { product_code, date, qty, customer_id, status , month} = req.body;
 
     try {
-        const query1 = `select * From public.products where product_code = $1 and product_month = $2`
+        const query1 = `select * From public.products where product_code = $1 and $2 = any (product_months);`
 
         const { rows } = await pool.query(query1,[product_code,month]);
 

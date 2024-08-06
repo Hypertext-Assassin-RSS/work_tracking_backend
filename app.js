@@ -4,6 +4,7 @@ const Customer = require('./routes/Customer')
 const Order = require('./routes/Order')
 const Product = require('./routes/Product')
 const Return = require('./routes/Return')
+const Summary = require('./routes/Summary')
 
 const cors=require('cors');
 require('dotenv').config();
@@ -19,12 +20,13 @@ app.use('/customer',Customer)
 app.use('/order',Order)
 app.use('/product',Product)
 app.use('/return',Return)
+app.use('/summary',Summary)
 
 app.listen(port, (req,res) => {
     console.log(`Example app listening on port ${port}`)
 })
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.status(404).send('404 Not Found!');
 })
 
