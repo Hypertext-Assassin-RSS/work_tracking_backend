@@ -87,4 +87,34 @@ function getNextId(method,lastId) {
 }
 
 
+router.put('/update', async (request,response) => {
+    const {  return_id,order_id,date,customer_id,orderQty,returnQty} = request.body;
+
+    try {
+        const return_update_query = `UPDATE public.Returns SET qty = $1 , date = $2 WHERE return_id = $3 and customer_id = $4`
+        const return_update_value = [returnQty,date,return_id,customer_id]
+        const return_update_query_result = await pool.query(return_update_query, return_update_value);
+        console.log('Return Update Result:', return_update_query_result);
+
+        const orders_update_query = `UPDATE public.orders SET qty = $1 , date = $2  WHERE order_id = $3 and customer_id = $4`
+        const orders_update_value = [orderQty,date,order_id,customer_id]
+        const orders_update_query_result = await pool.query(orders_update_query, orders_update_value);
+        console.log('Order Update Result:', orders_update_query_result);
+
+        const summary_update_query = `UPDATE public.summary SET return_qty = $1, order_qty = $2 , date = $3 WHERE return_id = $4 and order_id = $5`
+        const summary_update_value = [returnQty,orderQty,date,return_id,order_id]
+        const summary_update_query_result = await pool.query(summary_update_query, summary_update_value);
+        console.log('Summary Update Result:', summary_update_query_result);
+
+
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.status(200).json({ message: 'successfully' });
+        
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ message: 'Error' , error:error});
+    }
+
+});
+
 module.exports = router

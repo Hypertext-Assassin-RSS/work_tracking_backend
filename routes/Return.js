@@ -102,5 +102,29 @@ router.post('/create', async (req, res) => {
     }
 });
 
+router.put('/update', async (request,response) => {
+    const { product_code, date, qty} = req.body;
+
+    try {
+
+        const return_update_query = `UPDATE public.Returns SET qty = '$1' WHERE product_code = '$2 and date = $3`
+        const return_update_value = [qty,product_code,date]
+        const return_update_query_result = await pool.query(return_update_query, return_update_value);
+
+        const summary_update_query = `UPDATE public.summary SET return_qty = '$1' WHERE product_code = '$2 and date = $3`
+        const summary_update_value = [qty,product_code,date]
+        const summary_update_query_result = await pool.query(summary_update_query, summary_update_value);
+
+
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.status(200).json({ message: 'successfully' , 'result':return_update_query_result,summary_update_query_result });
+        
+    } catch (error) {
+        console.error(error);
+        request.status(500).json({ message: 'Error' , error:error});
+    }
+
+});
+
 
 module.exports = router;

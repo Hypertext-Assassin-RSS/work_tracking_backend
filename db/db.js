@@ -11,6 +11,7 @@ function createPool() {
     host: process.env.HOST,
     port: process.env.DB_PORT,
     database: process.env.DATABASE,
+    idleTimeoutMillis: 10000,
     ssl: {
       rejectUnauthorized: true,
       ca: process.env.PGSSLCERT,

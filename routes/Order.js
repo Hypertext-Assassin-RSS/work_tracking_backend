@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Orders (
 
 const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
-  
+
     const today = new Date();
     const currentMonth = monthNames[today.getMonth()];
     const lastMonth = monthNames[(today.getMonth() - 1)];
@@ -84,24 +84,89 @@ router.get('/last', async (req, res) => {
 
 
 router.post('/create', async (req, res) => {
-    const { product_code, date, qty, customer_id, status , month} = req.body;
+    const { product_code, date, qty, customer_id} = req.body;
 
     try {
-        const query1 = `select * From public.products where product_code = $1 and $2 = any (product_months);`
+        const query1 = `select * From public.products where product_code = $1;`
+        const { rows } = await pool.query(query1,[product_code]);
 
-        const { rows } = await pool.query(query1,[product_code,month]);
+        const order_id_query = 'SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1';
+        const result1 = await pool.query(order_id_query);
+        const lastOrderId = result1.rows[0] ? result1.rows[0].order_id : null;
+        const order_id = getNextId('order',lastOrderId);
 
-        const query = `INSERT INTO public.orders (product_name, product_code, date, qty, customer_id, status)
-                       VALUES ($1, $2, $3, $4, $5, $6)`;
-        const values = [rows[0].product_name, product_code ,date, qty, customer_id, status];
+        const query = `INSERT INTO public.orders (order_id,product_name, product_code, date, qty, customer_id, status) VALUES ($1, $2, $3, $4, $5, $6,$7)`;
+        const values = [order_id,rows[0].product_name, product_code ,date, qty, customer_id,'pending'];
     
         const result = await pool.query(query, values);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).json({ message: 'Order created successfully'});
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error creating order' });
-      }
+    }
+});
+
+function getNextId(method,lastId) {
+    console.log(lastId);
+    if(method == 'order') {
+        if (!lastId) {
+            return 'ORD000001';
+        } else {
+            if (!lastId.startsWith('ORD') || lastId.length <= 3) {
+                throw new Error('Invalid order ID format');
+            } else {
+                const numericPart = lastId.slice(3);
+
+                const incrementedNumber = parseInt(numericPart, 10) + 1;
+            
+                const newNumericPart = incrementedNumber.toString().padStart(6, '0');
+            
+            
+                return 'ORD' + newNumericPart;
+            }
+        }
+    } else if (method == 'return') {
+        if (!lastId) {
+            return 'RET000001';
+        } else {
+            if (!lastId.startsWith('RET') || lastId.length <= 3) {
+                throw new Error('Invalid order ID format');
+            } else {
+                const numericPart = lastId.slice(3);
+
+                const incrementedNumber = parseInt(numericPart, 10) + 1;
+            
+                const newNumericPart = incrementedNumber.toString().padStart(6, '0');
+            
+            
+                return 'RET' + newNumericPart;
+            }
+        }
+    }
+}
+
+router.put('/update', async (request,response) => {
+    const { product_code, date, qty,customer_id} = request.body;
+    try {
+
+        const orders_update_query = `UPDATE public.orders SET qty = $1 and date = $3  WHERE product_code = $2 and customer_id = $4`
+        const orders_update_value = [qty,product_code,date,customer_id]
+        const orders_update_query_result = await pool.query(orders_update_query, orders_update_value,customer_id);
+
+        // const summary_update_query = `UPDATE public.summary SET order_qty = $1 and date = $3  WHERE product_code = $2  and customer_id = $4`
+        // const summary_update_value = [qty,product_code,date,customer_id]
+        // const summary_update_query_result = await pool.query(summary_update_query, summary_update_value);
+
+
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.status(200).json({ message: 'successfully' , 'result':orders_update_query_result });
+        
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ message: 'Error' , error:error});
+    }
+
 });
 
 module.exports = router;

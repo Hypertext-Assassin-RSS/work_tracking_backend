@@ -141,7 +141,7 @@ router.get('/month', async (req, res) => {
 
 router.get('/last', async (req, res) => {
     try {
-        const query = `select * from products where product_month = $1`;
+        const query = `select * from products where $1 = any (product_months)`;
         const { rows } = await pool.query(query, [lastMonth]);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.json(rows);
