@@ -96,7 +96,7 @@ router.post('/create', async (req, res) => {
         const order_id = getNextId('order',lastOrderId);
 
         const query = `INSERT INTO public.orders (order_id,product_name, product_code, date, qty, customer_id, status) VALUES ($1, $2, $3, $4, $5, $6,$7)`;
-        const values = [order_id,rows[0].product_name, product_code ,date, qty, customer_id,'pending'];
+        const values = [order_id,rows[0].product_name, product_code ,date, qty, customer_id,'waiting'];
     
         const result = await pool.query(query, values);
         res.setHeader('Access-Control-Allow-Origin', '*');
