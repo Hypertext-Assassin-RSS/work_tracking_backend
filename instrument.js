@@ -6,6 +6,7 @@ Sentry.init({
   dsn: "https://8a8fe7c1d41e4ca408bebcb7e1370314@o4508081010114560.ingest.us.sentry.io/4508081010376704",
   integrations: [
     nodeProfilingIntegration(),
+    Sentry.browserTracingIntegration(),
   ],
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
