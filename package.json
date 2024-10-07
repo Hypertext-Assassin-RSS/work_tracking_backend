@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "NODE_ENV=development nodemon app.js",
+    "start": "nodemon app.js",
     "nodemon": "nodemon app.js"
   },
   "author": "",
