@@ -14,7 +14,7 @@ const pool = new Pool({
     idleTimeoutMillis: 10000,
     ssl: {
       rejectUnauthorized: true,
-      ca: process.env.DB_SSL_ROOT_CERT,
+    //   ca: process.env.DB_SSL_ROOT_CERT,
     },
   });
 
